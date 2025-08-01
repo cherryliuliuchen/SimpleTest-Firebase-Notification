@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FCM Web Push Test</title>
+  <meta charset="utf-8" />
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-messaging-compat.js"></script>  
+</head>
+<body>
+  <h1>🔔 Firebase Cloud Messaging (FCM) Browser Notification Test</h1>
+  <button onclick="requestPermission()">Get FCM Token</button>
+
+  <script>
+    // Replace the information from firebase settings
+    const firebaseConfig = {
+      apiKey: "12345678",
+      authDomain: "octagram-12345678.firebaseapp.com",
+      projectId: "octagram-12345678",
+      storageBucket: "octagram-12345678.firebasestorage.app",
+      messagingSenderId: "12345678",
+      appId: "1:12345678:web:12345678",
+      measurementId: "G-12345678"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    // Register service worker
+    navigator.serviceWorker.register('firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log("Service Worker registered");
+      });
+
+    // Get token and print
+    async function requestPermission() {
+      try {
+        const token = await messaging.getToken();
+        console.log(" FCM Token:", token);
+        alert("FCM Token copied to console!");
+      } catch (err) {
+        console.error(" Failed to get FCM token:", err);
+      }
+    }
+
+    // Receive the notification
+    messaging.onMessage((payload) => {
+      console.log('Foreground message received:', payload);
+      alert(`${payload.notification.title} - ${payload.notification.body}`);
+    });
+  </script>
+</body>
+</html>
